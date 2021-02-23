@@ -6,8 +6,8 @@ const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 // -----------------------------------------------------------------------------
 // パラメータ設定
 const line_config = {
-    channelAccessToken: process.env.LINE_ACCESS_TOKEN, // 環境変数からアクセストークンをセットしています
-    channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセットしています
+    channelAccessToken: process.env.LINE_ACCESS_TOKEN, // 環境変数からアクセストークンをセット
+    channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセット
 };
 
 // -----------------------------------------------------------------------------
