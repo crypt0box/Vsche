@@ -4,9 +4,6 @@ const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
 
-// 関数
-
-
 // -----------------------------------------------------------------------------
 // パラメータ設定
 const line_config = {
@@ -54,18 +51,13 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     }
                 }).then((responses) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
-                        let streamingUrl
+                        let message_text
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
-                          streamingUrl = 'unti';
-                          // fetchStreamingSummary()
-                          //   .then(result => {
-                          //     const videoId = result.data.items[0].id.videoId
-                          //     streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-                          //   });
-                        } 
+                            message_text = responses[0].queryResult.parameters.fields.livers.stringValue;
+                        }
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
-                            text: streamingUrl
+                            text: message_text
                         });
                     }
                 })
