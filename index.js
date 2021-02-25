@@ -17,6 +17,9 @@ async function fetchStreamingSummary() {
     console.log(error);
   }
 };
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+})
 
 // -----------------------------------------------------------------------------
 // パラメータ設定
