@@ -15,7 +15,7 @@ const hololivers = {
   ],
 } 
 
-const YOUTUBE_API_KEY = ''
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 async function fetchStreamingSummary() {
   try {

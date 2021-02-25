@@ -4,6 +4,18 @@ const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
 
+// 関数
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+
+async function fetchStreamingSummary() {
+  try {
+    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video"
+    return await axios.get(apiUrl)
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // -----------------------------------------------------------------------------
 // パラメータ設定
 const line_config = {
@@ -51,13 +63,17 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     }
                 }).then((responses) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
-                        let message_text
+                        let streamingUrl
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
-                            message_text = responses[0].queryResult.parameters.fields.livers.stringValue;
+                          fetchStreamingSummary()
+                            .then(result => {
+                              const videoId = result.data.items[0].id.videoId
+                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                            });
                         } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
-                            text: message_text
+                            text: streamingUrl
                         });
                     }
                 })
