@@ -8,10 +8,10 @@ const axios = require('axios');
 // 関数
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
-function fetchStreamingSummary() {
+async function fetchStreamingSummary() {
   try {
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
-    const response = axios.get(apiUrl);
+    const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
     console.log(error);
@@ -71,6 +71,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                             .then(result => {
                               const videoId = result.data.items[0].id.videoId
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                              console.log(streamingUrl);
                             })
                         } 
                         return bot.replyMessage(event.replyToken, {
