@@ -13,7 +13,7 @@ async function fetchStreamingSummary() {
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
     return await axios.get(apiUrl)
   } catch (error) {
-    console.log('HTTPエラー',error);
+    console.log(error);
   }
 };
 
@@ -70,6 +70,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                             .then(result => {
                               const videoId = result.data.items[0].id.videoId
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                              console.log(streamingUrl);
                             });
                         } 
                         return bot.replyMessage(event.replyToken, {
