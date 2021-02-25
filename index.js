@@ -70,6 +70,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                         let streamingUrl
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
+                          res.sendStatus(200);
                           fetchStreamingSummary()
                             .then(result => {
                               const videoId = result.data.items[0].id.videoId
