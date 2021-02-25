@@ -50,13 +50,11 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         }
                     }
                 }).then((responses) => {
-                    if (responses[0].queryResult && responses[0].queryResult.action == "list-schedule"){
+                    if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                         let message_text
                         if (responses[0].queryResult.parameters.fields.schedule.stringValue){
-                            message_text = `毎度！${responses[0].queryResult.parameters.fields.schedule.stringValue}ね。どちらにお届けしましょ？`;
-                        } else {
-                            message_text = `毎度！ご注文は？`;
-                        }
+                            message_text = responses[0].queryResult.parameters.fields.schedule.stringValue;
+                        } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
                             text: message_text
