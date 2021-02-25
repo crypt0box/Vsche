@@ -3,6 +3,7 @@
 const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
+const axios = require('axios');
 
 // 関数
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -65,7 +66,11 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                         let streamingUrl
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
-                            message_text = responses[0].queryResult.parameters.fields.livers.stringValue;
+                          fetchStreamingSummary()
+                            .then(result => {
+                              const videoId = result.data.items[0].id.videoId
+                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                            });
                         } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
