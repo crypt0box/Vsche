@@ -10,11 +10,10 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 async function fetchStreamingSummary() {
   try {
-    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video"
-    console.log(apiUrl);
+    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
     return await axios.get(apiUrl)
   } catch (error) {
-    console.log(error);
+    console.log('HTTPエラー',error);
   }
 };
 
