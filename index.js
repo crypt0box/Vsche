@@ -8,10 +8,10 @@ const axios = require('axios');
 // 関数
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
-async function fetchStreamingSummary() {
+function fetchStreamingSummary() {
   try {
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
-    const response = await axios.get(apiUrl);
+    const response = axios.get(apiUrl);
     return response;
   } catch (error) {
     console.log(error);
@@ -67,12 +67,11 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                         let streamingUrl
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
-                          streamingUrl ='iunuti'
-                          // fetchStreamingSummary()
-                          //   .then(result => {
-                          //     const videoId = result.data.items[0].id.videoId
-                          //     streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-                          //   })
+                          fetchStreamingSummary()
+                            .then(result => {
+                              const videoId = result.data.items[0].id.videoId
+                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                            })
                         } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
