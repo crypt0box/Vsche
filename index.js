@@ -10,7 +10,7 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 async function fetchStreamingSummary() {
   try {
-    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UCCzUftO8KOVkV4wQG1vkUvg" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
+    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + "UC1DCedRgGHBdm81E1llLhOQ" + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
@@ -70,7 +70,8 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                           fetchStreamingSummary()
                             .then(result => {
                               const videoId = result.data.items[0].id.videoId
-                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                              streamingUrl = 'hegeeee';
+                              // streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               console.log(streamingUrl);
                             })
                         } 
