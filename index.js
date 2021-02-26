@@ -89,5 +89,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
         (response) => {
             console.log(`${response.length} event(s) processed.`);
         }
-    );
+    ).catch(error => {
+      console.log(error);
+    });
 });
