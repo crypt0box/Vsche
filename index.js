@@ -69,13 +69,14 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         if (responses[0].queryResult.parameters.fields.livers.stringValue){
                           fetchStreamingSummary()
                             .then(result => {
-                              const videoId = result.data.items[0].id.videoId
-                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                              const videoId = result.data.items[0].id.videoId;
+                              streamingUrl = 'hogeeeee';
+                              // streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               console.log(streamingUrl);
                             })
                         } 
                         return bot.replyMessage(event.replyToken, {
-                            type: "video",
+                            type: "text",
                             text: streamingUrl
                         });
                     }
