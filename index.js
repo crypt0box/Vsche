@@ -73,6 +73,9 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               console.log(streamingUrl);
                             })
+                            .catch(error => {
+                              console.log(error);
+                            });
                         } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
