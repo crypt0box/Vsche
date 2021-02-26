@@ -73,9 +73,6 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               console.log(streamingUrl);
                             })
-                            .catch(error => {
-                              console.log(error);
-                            });
                         } 
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
@@ -88,11 +85,11 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
     });
 
     // すべてのイベント処理が終了したら何個のイベントが処理されたか出力。
-    // Promise.all(events_processed).then(
-    //     (response) => {
-    //         console.log(`${response.length} event(s) processed.`);
-    //     }
-    // ).catch(error => {
-    //   console.log(error);
-    // });
+    Promise.all(events_processed).then(
+        (response) => {
+            console.log(`${response.length} event(s) processed.`);
+        }
+    ).catch(error => {
+      console.log('hogehoge', error);
+    });
 });
