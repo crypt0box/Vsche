@@ -75,7 +75,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                             })
                         } 
                         return bot.replyMessage(event.replyToken, {
-                            type: "text",
+                            type: "video",
                             text: streamingUrl
                         });
                     }
