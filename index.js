@@ -77,9 +77,9 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         return bot.replyMessage(event.replyToken, {
                             type: "text",
                             text: streamingUrl
-                        }).then(res => console.log('aaa', res).catch(error => console.log('bbb', error)));
+                        });
                     }
-                })
+                }).catch(error => console.log('bbb', error))
             );
         }
     });
