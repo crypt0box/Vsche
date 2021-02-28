@@ -113,11 +113,12 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                                 text: streamingUrl
                               });
                             })
-                            .catch(() => {
+                            .catch(error => {
                                 bot.replyMessage(event.replyToken, {
                                 type: "text",
                                 text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
                               });
+                              console.log("error", error)
                             });
                         } 
                         return 
