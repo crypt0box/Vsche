@@ -116,8 +116,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                             .catch(() => {
                                 bot.replyMessage(event.replyToken, {
                                 type: "text",
-                                text: `いまのところ${liverName}の配信予定は無いようです。
-                                        また後で聞いてみてくださいね！`
+                                text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
                               });
                             });
                         } 
