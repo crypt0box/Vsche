@@ -44,9 +44,9 @@ const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
 const timeZone = 'Asia/Tokyo'
 
 const now = new Date();
+console.log("now", now)
 const japanDate = utcToZonedTime(now, timeZone)
 
 const pattern = 'yyyy.M.d HH:mm'
 const output = format(japanDate, pattern, { timeZone: timeZone })
-console.log("output", output)
 
