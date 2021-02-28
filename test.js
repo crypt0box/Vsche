@@ -30,11 +30,23 @@
 //   .then(result => {
 //     const videoId = result.data.items[0].id.videoId
 //     const publishTime = result.data.items[0].snippet.publishTime
-//     console.log("https://www.youtube.com/watch?v=" + videoId);
 //   });
 
-const livers = {
-  '天音かなた': "UCp6993wxpyDPHUpavwDFqgg"
-}
+// const livers = {
+//   '天音かなた': "UCp6993wxpyDPHUpavwDFqgg"
+// }
 
-console.log(livers['天音かなた'])
+// console.log(livers['天音かなた'])
+
+const format = require('date-fns/format');
+const compareAsc = require('date-fns/compareAsc');
+const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
+const timeZone = 'Asia/Tokyo'
+
+const now = new Date();
+const japanDate = utcToZonedTime(now, timeZone)
+
+const pattern = 'yyyy.M.d HH:mm'
+const output = format(japanDate, pattern, { timeZone: timeZone })
+console.log("output", output)
+
