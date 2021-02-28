@@ -46,7 +46,8 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 async function fetchStreamingSummary(channelId) {
   try {
-    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video&publishedAfter=" + today;
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
