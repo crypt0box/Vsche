@@ -46,7 +46,8 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 async function fetchStreamingSummary(channelId) {
   try {
-    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&type=video";
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
@@ -109,9 +110,16 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                               const videoId = result.data.items[0].id.videoId
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               bot.replyMessage(event.replyToken, {
-                                  type: "text",
-                                  text: streamingUrl
+                                type: "text",
+                                text: streamingUrl
                               });
+                            })
+                            .catch(error => {
+                                bot.replyMessage(event.replyToken, {
+                                type: "text",
+                                text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
+                              });
+                              console.log("error", error)
                             });
                         } 
                         return 
