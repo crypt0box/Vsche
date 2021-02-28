@@ -109,8 +109,15 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                               const videoId = result.data.items[0].id.videoId
                               streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                               bot.replyMessage(event.replyToken, {
-                                  type: "text",
-                                  text: streamingUrl
+                                type: "text",
+                                text: streamingUrl
+                              });
+                            })
+                            .catch(() => {
+                                bot.replyMessage(event.replyToken, {
+                                type: "text",
+                                text: `いまのところ${liverName}の配信予定は無いようです。
+                                        また後で聞いてみてくださいね！`
                               });
                             });
                         } 
