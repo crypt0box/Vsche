@@ -44,18 +44,37 @@ const livers = {
 // 関数
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
+// 指定したchannelIdの今日の配信予定情報を取得
 async function fetchStreamingSummary(channelId) {
   try {
     const today = new Date(new Date().setHours(0, 0, 0, 0));
-    console.log("fetchStreamingSummary -> today", today)
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
-    console.log("fetchStreamingSummary -> today.toISOString()", today.toISOString())
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
     console.log(error);
   }
 };
+
+// 指定したvideoIdの配信予定時刻を取得
+async function fetchStreamingSchedule(videoId) {
+  try {
+    const apiUrl = "https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=" + videoId + "&key=" + YOUTUBE_API_KEY;
+    const response = await axios.get(apiUrl);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// UTCを日本時間に変換
+function utcToJapanDate(utcDate) {
+  const timeZone = 'Asia/Tokyo';
+  const japanDate = utcToZonedTime(utcDate, timeZone);
+  const pattern = 'HH時mm分';
+  const formatedDate = format(japanDate, pattern, { timeZone: timeZone });
+  return formatedDate;
+}
 
 // -----------------------------------------------------------------------------
 // パラメータ設定
@@ -106,16 +125,24 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                         let streamingUrl = '';
                         let liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
-                        if (liverName){
-                          fetchStreamingSummary(livers[liverName])
-                          .then(result => {
-                            const videoId = result.data.items[0].id.videoId
-                            streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-                            bot.replyMessage(event.replyToken, {
-                              type: "text",
-                              text: streamingUrl
-                            });
-                          })
+                        if (liverName) {
+                          fetchStreamingSummary(livers['liverName'])
+                            .then(result => {
+                              const videoId = result.data.items[0].id.videoId;
+                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                              fetchStreamingSchedule(videoId)
+                                .then(result => {
+                                  const scheduledStartTime = result.data.items[0].liveStreamingDetails['scheduledStartTime'];
+                                  const scheduledJapanStartTime = utcToJapanDate(scheduledStartTime);
+                                  bot.replyMessage(event.replyToken, {
+                                    type: "text",
+                                    text: `${liverName}は${scheduledJapanStartTime}から配信予定です！\n${streamingUrl}`
+                                  });
+                                })
+                                .catch(error => {
+                                  console.log("fetchStreamingScheduleError", error)
+                                });
+                            })
                           .catch(error => {
                               bot.replyMessage(event.replyToken, {
                               type: "text",
