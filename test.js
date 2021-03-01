@@ -38,17 +38,24 @@ const axios = require('axios');
 
 // console.log(livers['天音かなた'])
 
-// const format = require('date-fns/format');
+const format = require('date-fns/format');
 // const compareAsc = require('date-fns/compareAsc');
-// const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
+const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
 // const timeZone = 'Asia/Tokyo'
 
 // const now = new Date();
-// console.log("now", now)
 // const japanDate = utcToZonedTime(now, timeZone)
 
 // const pattern = 'yyyy.M.d HH:mm'
 // const output = format(japanDate, pattern, { timeZone: timeZone })
+
+function utcToJapanDate(utcDate) {
+  const timeZone = 'Asia/Tokyo';
+  const japanDate = utcToZonedTime(utcDate, timeZone);
+  const pattern = 'yyyy.M.d HH:mm'
+  const formatedDate = format(japanDate, pattern, { timeZone: timeZone })
+  return formatedDate;
+}
 const livers = {
   "ときのそら": "UCp6993wxpyDPHUpavwDFqgg",
   "AZKi": "UC0TXe_LYZ4scaW2XMyi5_kw",
@@ -83,7 +90,7 @@ const livers = {
   "獅白ぼたん": "UCUKD-uaobj9jiqB-VXt71mA",
   "尾丸ポルカ": "UCK9V2B22uJYu3N7eR_BT9QA",
 }
-const YOUTUBE_API_KEY = ''
+const YOUTUBE_API_KEY = '';
 async function fetchStreamingSummary(channelId) {
   try {
     const today = new Date(new Date().setHours(0, 0, 0, 0));
@@ -95,8 +102,30 @@ async function fetchStreamingSummary(channelId) {
   }
 };
 
-fetchStreamingSummary(livers['湊あくあ'])
-  .then(res => console.log(res.data))
+async function fetchStreamingSchedule(videoId) {
+  try {
+    const apiUrl = "https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=" + videoId + "&key=" + YOUTUBE_API_KEY;
+    const response = await axios.get(apiUrl);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+fetchStreamingSummary(livers['白上フブキ'])
+  .then(result => {
+    const videoId = result.data.items[0].id.videoId;
+    fetchStreamingSchedule(videoId)
+      .then(result => {
+        const scheduledStartTime = result.data.items[0].liveStreamingDetails['scheduledStartTime'];
+        const scheduledJapanStartTime = utcToJapanDate(scheduledStartTime);
+      })
+      .catch(error => {
+        console.log("fetchStreamingScheduleError", error)
+      });
+  })
+  .catch(error => {
+  console.log("fetchStreamingSummaryError", error)
+  });
 
 // const today = new Date(new Date().setHours(0, 0, 0, 0));
-// console.log("today", today.toISOString())
