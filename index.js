@@ -106,22 +106,22 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         let liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
                         if (liverName){
                           fetchStreamingSummary(livers[liverName])
-                          console.log("liverName", liverName)
-                            .then(result => {
-                              const videoId = result.data.items[0].id.videoId
-                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-                              bot.replyMessage(event.replyToken, {
-                                type: "text",
-                                text: streamingUrl
-                              });
-                            })
-                            .catch(error => {
-                                bot.replyMessage(event.replyToken, {
-                                type: "text",
-                                text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
-                              });
-                              console.log("error", error)
+                          .then(result => {
+                            console.log("liverName", liverName)
+                            const videoId = result.data.items[0].id.videoId
+                            streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+                            bot.replyMessage(event.replyToken, {
+                              type: "text",
+                              text: streamingUrl
                             });
+                          })
+                          .catch(error => {
+                              bot.replyMessage(event.replyToken, {
+                              type: "text",
+                              text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
+                            });
+                            console.log("error", error)
+                          });
                         } 
                         return 
                     }
