@@ -5,6 +5,10 @@ const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
 const axios = require('axios');
 
+// date utility library
+const format = require('date-fns/format');
+const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
+
 // ライバー情報
 const livers = {
     "ときのそら": "UCp6993wxpyDPHUpavwDFqgg",
