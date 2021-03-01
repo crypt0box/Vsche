@@ -107,7 +107,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         if (liverName){
                           fetchStreamingSummary(livers[liverName])
                           .then(result => {
-                            console.log("liverName", liverName)
+                            console.log("result", result)
                             const videoId = result.data.items[0].id.videoId
                             streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                             bot.replyMessage(event.replyToken, {
