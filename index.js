@@ -47,7 +47,9 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 async function fetchStreamingSummary(channelId) {
   try {
     const today = new Date(new Date().setHours(0, 0, 0, 0));
+    console.log("fetchStreamingSummary -> today", today)
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
+    console.log("fetchStreamingSummary -> today.toISOString()", today.toISOString())
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
@@ -107,7 +109,6 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                         if (liverName){
                           fetchStreamingSummary(livers[liverName])
                           .then(result => {
-                            console.log("result", result)
                             const videoId = result.data.items[0].id.videoId
                             streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
                             bot.replyMessage(event.replyToken, {
