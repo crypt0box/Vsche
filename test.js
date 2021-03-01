@@ -83,11 +83,12 @@ const livers = {
   "獅白ぼたん": "UCUKD-uaobj9jiqB-VXt71mA",
   "尾丸ポルカ": "UCK9V2B22uJYu3N7eR_BT9QA",
 }
-const YOUTUBE_API_KEY = ''
+const YOUTUBE_API_KEY = '';
 async function fetchStreamingSummary(channelId) {
   try {
     const today = new Date(new Date().setHours(0, 0, 0, 0));
     const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
+    console.log("fetchStreamingSummary -> apiUrl", apiUrl)
     const response = await axios.get(apiUrl);
     return response;
   } catch (error) {
@@ -95,8 +96,8 @@ async function fetchStreamingSummary(channelId) {
   }
 };
 
-fetchStreamingSummary(livers['湊あくあ'])
-  .then(res => console.log(res.data))
+fetchStreamingSummary(livers['夏色まつり'])
+  .then(res => console.log(res.data.items[0].id))
 
 // const today = new Date(new Date().setHours(0, 0, 0, 0));
 // console.log("today", today.toISOString())
