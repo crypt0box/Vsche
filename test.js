@@ -179,7 +179,9 @@ async function main() {
   }
 }
 
-main()
+Object.keys(livers).forEach(e => {
+  console.log(e)
+});
 // async function fetchStreamingSchedule(videoId) {
 //   try {
 //     const apiUrl = "https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=" + videoId + "&key=" + YOUTUBE_API_KEY;
