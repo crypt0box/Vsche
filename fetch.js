@@ -74,8 +74,8 @@ function utcToJapanDate(utcDate) {
 };
 
 async function main() {
-  Object.keys(livers).forEach(liverName => {
-    try {
+  try {
+    for (let liverName of livers) {
       const streamingInfo = await fetchStreamingSummary(livers[liverName]['channelId']);
       const videoId = streamingInfo.data.items[0].id.videoId;
       const streamingSchedule = await fetchStreamingSchedule(videoId);
@@ -83,10 +83,10 @@ async function main() {
       scheduledStartTime = utcToJapanDate(scheduledStartTime);
       livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
       livers[liverName]["scheduledStartTime"] = scheduledStartTime;
-    } catch (error) {
-      console.log(`エラーが発生しました (${error})`);
-    }
-  });
+    };
+  } catch (error) {
+    console.log(`エラーが発生しました (${error})`);
+  }
 };
 
 main()
