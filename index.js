@@ -49,7 +49,6 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
     req.body.events.forEach((event) => {
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
         if (event.type == "message" && event.message.type == "text"){
-          console.log(livers);
             events_processed.push(
                 session_client.detectIntent({
                     session: session_client.sessionPath(process.env.GOOGLE_PROJECT_ID, event.source.userId),
