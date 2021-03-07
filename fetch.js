@@ -40,7 +40,7 @@ const livers = {
   '尾丸ポルカ': { channelId: 'UCK9V2B22uJYu3N7eR_BT9QA' }
 };
 
-exports.getLiversInfo =  () => {
+const getLiversInfo =  () => {
   return livers;
 };
 
@@ -94,3 +94,5 @@ async function main() {
 };
 
 main()
+
+module.exports = getLiversInfo;
