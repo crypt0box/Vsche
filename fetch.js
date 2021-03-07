@@ -87,7 +87,7 @@ async function main() {
     scheduledStartTime = utcToJapanDate(scheduledStartTime);
     livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
     livers[liverName]["scheduledStartTime"] = scheduledStartTime;
-    console.log(livers[liverName]);
+    console.log(livers);
   } catch (error) {
     console.log(`エラーが発生しました (${error})`);
   }
