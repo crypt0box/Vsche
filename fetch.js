@@ -40,10 +40,6 @@ const livers = {
   '尾丸ポルカ': { channelId: 'UCK9V2B22uJYu3N7eR_BT9QA' }
 };
 
-const getLiversInfo =  () => {
-  return livers;
-};
-
 function fetchStreamingSummary(channelId) {
   const today = new Date(new Date().setHours(0, 0, 0, 0));
   const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
@@ -94,4 +90,4 @@ async function main() {
 
 main()
 
-module.exports = getLiversInfo;
+module.exports = livers;
