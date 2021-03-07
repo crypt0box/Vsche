@@ -61,6 +61,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                 }).then((responses) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                       const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
+                      console.log(livers);
                       const streamingUrl = livers[liverName]["streamingUrl"];
                       const scheduledStartTime = livers[liverName]["scheduledStartTime"];
                       const text = streamingUrl ? 
