@@ -75,7 +75,7 @@ function utcToJapanDate(utcDate) {
 
 async function main() {
   try {
-    for (let liverName of livers) {
+    for (let liverName of Object.keys(livers)) {
       const streamingInfo = await fetchStreamingSummary(livers[liverName]['channelId']);
       const videoId = streamingInfo.data.items[0].id.videoId;
       const streamingSchedule = await fetchStreamingSchedule(videoId);
