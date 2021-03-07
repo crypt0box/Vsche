@@ -77,7 +77,7 @@ async function main() {
   try {
     for (let liverName of Object.keys(livers)) {
       const streamingInfo = await fetchStreamingSummary(livers[liverName]['channelId']);
-      if (streamingInfo.data.items[0].id) {
+      if (streamingInfo.data.items[0]) {
         const videoId = streamingInfo.data.items[0].id.videoId;
         const streamingSchedule = await fetchStreamingSchedule(videoId);
         let scheduledStartTime = streamingSchedule.data.items[0].liveStreamingDetails['scheduledStartTime'];
