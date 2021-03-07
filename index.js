@@ -4,6 +4,7 @@ const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
 const livers = require('./fetch');
+console.log(livers);
 
 // LINEBOTにリプライメッセージを送信させる
 function lineBotReplyMessage(token, text) {
