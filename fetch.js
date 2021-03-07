@@ -77,12 +77,17 @@ async function main() {
   try {
     for (let liverName of Object.keys(livers)) {
       const streamingInfo = await fetchStreamingSummary(livers[liverName]['channelId']);
-      const videoId = streamingInfo.data.items[0].id.videoId;
-      const streamingSchedule = await fetchStreamingSchedule(videoId);
-      let scheduledStartTime = streamingSchedule.data.items[0].liveStreamingDetails['scheduledStartTime'];
-      scheduledStartTime = utcToJapanDate(scheduledStartTime);
-      livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
-      livers[liverName]["scheduledStartTime"] = scheduledStartTime;
+      if (streamingInfo.data.items[0].id) {
+        const videoId = streamingInfo.data.items[0].id.videoId;
+        const streamingSchedule = await fetchStreamingSchedule(videoId);
+        let scheduledStartTime = streamingSchedule.data.items[0].liveStreamingDetails['scheduledStartTime'];
+        scheduledStartTime = utcToJapanDate(scheduledStartTime);
+        livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
+        livers[liverName]["scheduledStartTime"] = scheduledStartTime;
+      } else {
+        livers[liverName]["streamingUrl"] = "";
+        livers[liverName]["scheduledStartTime"] = "";
+      }
     };
   } catch (error) {
     console.log(`エラーが発生しました (${error})`);
