@@ -3,81 +3,14 @@
 const server = require("express")();
 const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
 const dialogflow = require("dialogflow");
-const axios = require('axios');
+const livers = require('./fetch');
 
-// date utility library
-const format = require('date-fns/format');
-const utcToZonedTime = require('date-fns-tz/utcToZonedTime')
-
-// ライバー情報
-const livers = {
-    "ときのそら": "UCp6993wxpyDPHUpavwDFqgg",
-    "AZKi": "UC0TXe_LYZ4scaW2XMyi5_kw",
-    "ロボ子さん": "UCDqI2jOz0weumE8s7paEk6g",
-    "さくらみこ": "UC-hM6YJuNYVAmUWxeIr9FeA",
-    "白上フブキ": "UCdn5BQ06XqgXoAxIhbqw5Rg",
-    "夏色まつり": "UCQ0UDLQCjY0rmuxCDE38FGg",
-    "夜空メル": "UCD8HOxPs4Xvsm8H0ZxXGiBw",
-    "赤井はあと": "UC1CfXB_kRs3C-zaeTG3oGyg",
-    "アキ・ローゼンタール": "UCFTLzh12_nrtzqBPsTCqenA",
-    "湊あくあ": "UC1opHUrw8rvnsadT-iGp7Cg",
-    "癒月ちょこ": "UC1suqwovbL1kzsoaZgFZLKg",
-    "百鬼あやめ": "UC7fk0CB07ly8oSl0aqKkqFg",
-    "紫咲シオン": "UCXTpFs_3PqI41qX2d9tL2Rw",
-    "大空スバル": "UCvzGlP9oQwU--Y0r9id_jnA",
-    "大神ミオ": "UCp-5t9SrOQwXMU7iIjQfARg",
-    "猫又おかゆ": "UCvaTdHTWBGv3MKj3KVqJVCw",
-    "戌神ころね": "UChAnqc_AY5_I3Px5dig3X1Q",
-    "不知火フレア": "UCvInZx9h3jC2JzsIzoOebWg",
-    "白銀ノエル": "UCdyqAaZDKHXg4Ahi7VENThQ",
-    "宝鐘マリン": "UCCzUftO8KOVkV4wQG1vkUvg",
-    "兎田ぺこら": "UC1DCedRgGHBdm81E1llLhOQ",
-    "潤羽るしあ": "UCl_gCybOJRIgOXw6Qb4qJzQ",
-    "星街すいせい": "UC5CwaMl1eIgY8h02uZw7u8A",
-    "天音かなた": "UCZlDXzGoo7d44bwdNObFacg",
-    "桐生ココ": "UCS9uQI-jC3DE0L4IpXyvr6w",
-    "角巻わため": "UCqm3BQLlJfvkTsX_hvm0UmA",
-    "常闇トワ": "UC1uv2Oq6kNxgATlCiez59hw",
-    "姫森ルーナ": "UCa9Y57gfeY0Zro_noHRVrnw",
-    "雪花ラミィ": "UCFKOVgVbGmX65RxO3EtH3iw",
-    "桃鈴ねね": "UCAWSyEs_Io8MtpY3m-zqILA",
-    "獅白ぼたん": "UCUKD-uaobj9jiqB-VXt71mA",
-    "尾丸ポルカ": "UCK9V2B22uJYu3N7eR_BT9QA",
-}
-
-// 関数
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-
-// 指定したchannelIdの今日の配信予定情報を取得
-async function fetchStreamingSummary(channelId) {
-  try {
-    const today = new Date(new Date().setHours(0, 0, 0, 0));
-    const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
-    const response = await axios.get(apiUrl);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-// 指定したvideoIdの配信予定時刻を取得
-async function fetchStreamingSchedule(videoId) {
-  try {
-    const apiUrl = "https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=" + videoId + "&key=" + YOUTUBE_API_KEY;
-    const response = await axios.get(apiUrl);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-// UTCを日本時間に変換
-function utcToJapanDate(utcDate) {
-  const timeZone = 'Asia/Tokyo';
-  const japanDate = utcToZonedTime(utcDate, timeZone);
-  const pattern = 'HH時mm分';
-  const formatedDate = format(japanDate, pattern, { timeZone: timeZone });
-  return formatedDate;
+// LINEBOTにリプライメッセージを送信させる
+function lineBotReplyMessage(token, text) {
+  bot.replyMessage(token, {
+    type: "text",
+    text: text
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -127,35 +60,13 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     }
                 }).then((responses) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
-                        let streamingUrl = '';
-                        let liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
-                        if (liverName) {
-                          fetchStreamingSummary(livers[liverName])
-                            .then(result => {
-                              const videoId = result.data.items[0].id.videoId;
-                              streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-                              fetchStreamingSchedule(videoId)
-                                .then(result => {
-                                  const scheduledStartTime = result.data.items[0].liveStreamingDetails['scheduledStartTime'];
-                                  const scheduledJapanStartTime = utcToJapanDate(scheduledStartTime);
-                                  bot.replyMessage(event.replyToken, {
-                                    type: "text",
-                                    text: `${liverName}は${scheduledJapanStartTime}から配信予定です！\n${streamingUrl}`
-                                  });
-                                })
-                                .catch(error => {
-                                  console.log("fetchStreamingScheduleError", error)
-                                });
-                            })
-                          .catch(error => {
-                              bot.replyMessage(event.replyToken, {
-                              type: "text",
-                              text: `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`
-                            });
-                            console.log("error", error)
-                          });
-                        } 
-                        return 
+                      const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
+                      const streamingUrl = livers[liverName]["streamingUrl"];
+                      const scheduledStartTime = livers[liverName]["scheduledStartTime"];
+                      const text = streamingUrl ? 
+                      `${liverName}は${scheduledStartTime}から配信予定です！\n${streamingUrl}` : 
+                      `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`;
+                      lineBotReplyMessage(event.replyToken, text);
                     }
                 }).catch(error => {
                   console.log(error)
