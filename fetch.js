@@ -41,7 +41,7 @@ const livers = {
 };
 
 function fetchStreamingSummary(channelId) {
-  const today = new Date(new Date().setHours(0, 0, 0, 0));
+  const today = new Date();
   const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
   return axios.get(apiUrl)
     .then(response => {
@@ -84,10 +84,8 @@ async function main() {
         scheduledStartTime = utcToJapanDate(scheduledStartTime);
         livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
         livers[liverName]["scheduledStartTime"] = scheduledStartTime;
-      } else {
-        livers[liverName]["streamingUrl"] = "";
-        livers[liverName]["scheduledStartTime"] = "";
       }
+      return;
     };
   } catch (error) {
     console.log(`エラーが発生しました (${error})`);
