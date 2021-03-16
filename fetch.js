@@ -1,8 +1,17 @@
 // date utility library
 const format = require('date-fns/format');
 const utcToZonedTime = require('date-fns-tz/utcToZonedTime');
-const axios = require('axios');
 
+// firebase library
+const admin = require('firebase-admin');
+const ServiceAccount = require('./ServiceAccount.json');
+admin.initializeApp({ credential: admin.credential.cert(ServiceAccount) });
+
+const db = admin.firestore();
+const liversRef = db.collection('livers')
+
+// for yotubeAPI library
+const axios = require('axios');
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 const livers = {
@@ -41,7 +50,7 @@ const livers = {
 };
 
 function fetchStreamingSummary(channelId) {
-  const today = new Date();
+  const today = new Date(new Date().setHours(0, 0, 0, 0));
   const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
   return axios.get(apiUrl)
     .then(response => {
@@ -73,7 +82,7 @@ function utcToJapanDate(utcDate) {
   return formatedDate;
 };
 
-async function main() {
+async function fetchLiversInfo() {
   try {
     for (let liverName of Object.keys(livers)) {
       const streamingInfo = await fetchStreamingSummary(livers[liverName]['channelId']);
@@ -82,17 +91,31 @@ async function main() {
         const streamingSchedule = await fetchStreamingSchedule(videoId);
         let scheduledStartTime = streamingSchedule.data.items[0].liveStreamingDetails['scheduledStartTime'];
         scheduledStartTime = utcToJapanDate(scheduledStartTime);
-        livers[liverName]["streamingUrl"] = "https://www.youtube.com/watch?v=" + videoId;
-        livers[liverName]["scheduledStartTime"] = scheduledStartTime;
+        const updateLiversInfo = liversRef.doc(liverName).update({
+          streamingUrl: "https://www.youtube.com/watch?v=" + videoId,
+          scheduledStartTime: scheduledStartTime,
+        });
       }
-      return;
     };
   } catch (error) {
     console.log(`エラーが発生しました (${error})`);
   }
 };
 
-main()
+function updateLiversInfo() {
+  for (let liverName of Object.keys(livers)) {
+    liversRef.doc(liverName).get().then(response => {
+      livers[liverName]['streamingUrl'] = response.data().streamingUrl;
+      livers[liverName]['scheduledStartTime'] = response.data().scheduledStartTime;
+    })
+    .catch((error) => {
+      console.log(`Error:updateLiversInfo (${error})`);
+    });
+  };
+};
+
+fetchLiversInfo()
+updateLiversInfo()
 console.log('run fetch.js');
 
 module.exports = livers;
