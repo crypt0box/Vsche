@@ -50,7 +50,6 @@ function utcToJapanDate(utcDate) {
 async function createReplyMessage(liverName) {
 	try {
     const streamingInfo = await fetchStreamingInfo(livers[liverName]["channelId"]);
-    console.log("createReplyMessage -> streamingInfo.data.items[0]", streamingInfo.data.items[0])
     if (streamingInfo.data.items[0]) {
       const videoId = streamingInfo.data.items[0].id.videoId;
       const streamingScheduledInfo = await fetchStreamingScheduledInfo(videoId);
@@ -121,7 +120,7 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                       const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
 											const replyMessage = createReplyMessage(liverName);
-											lineBotReplyMessage(event.replyToken, replyMessage);
+											// lineBotReplyMessage(event.replyToken, replyMessage);
                     }
                 }).catch(error => {
                   console.log(error)
