@@ -12,7 +12,7 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 // 関数
 // 配信予定枠のVideoIdを取得
-function fetchStreamingVideoId(channelId) {
+function fetchStreamingInfo(channelId) {
   const today = new Date(new Date().setHours(0, 0, 0, 0));
   const apiUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&key=" + YOUTUBE_API_KEY + "&eventType=upcoming&publishedAfter=" + today.toISOString() + "&type=video";
   return axios.get(apiUrl)
@@ -20,22 +20,20 @@ function fetchStreamingVideoId(channelId) {
       if (!response) {
         return Promise.reject(new Error(`fetchStreamingSummary ${response.status}: ${response.statusText}`));
       } else {
-        const videoId = response.data.items[0].id.videoId;
-        return videoId;
+        return response;
       }
     })
 };
 
 // 配信予定時刻を取得
-function fetchStreamingScheduledStartTime(videoId) {
+function fetchStreamingScheduledInfo(videoId) {
   const apiUrl = "https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=" + videoId + "&key=" + YOUTUBE_API_KEY;
   return axios.get(apiUrl)
     .then(response => {
       if (!response) {
         return Promise.reject(new Error(`fetchStreamingSchedule ${response.status}: ${response.statusText}`));
       } else {
-        const scheduledStartTime = response.data.items[0].liveStreamingDetails['scheduledStartTime'];
-        return scheduledStartTime;
+        return response;
       }
     })
 };
@@ -51,10 +49,12 @@ function utcToJapanDate(utcDate) {
 
 async function createReplyMessage(liverName) {
 	try {
-		const videoId = await fetchStreamingVideoId(livers[liverName]["channelId"]);
-		const scheduledStartTime = await fetchStreamingScheduledStartTime(videoId);
+		const streamingInfo = await fetchStreamingInfo(livers[liverName]["channelId"]);
+		const videoId = streamingInfo.data.items[0].id.videoId;
+		const streamingScheduledInfo = await fetchStreamingScheduledInfo(videoId);
+		const scheduledStartTime = streamingScheduledInfo.data.items[0].liveStreamingDetails['scheduledStartTime'];
 		const streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-		const replyMessage = streamingUrl ? 
+		const replyMessage = streamingInfo ? 
 		`${liverName}は${utcToJapanDate(scheduledStartTime)}から配信予定です！\n${streamingUrl}` : 
 		`いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`;
 		return replyMessage;
@@ -64,10 +64,10 @@ async function createReplyMessage(liverName) {
 };
 
 // LINEBOTにリプライメッセージを送信させる
-function lineBotReplyMessage(token, text) {
+function lineBotReplyMessage(token, replyMessage) {
   bot.replyMessage(token, {
     type: "text",
-    text: text
+    text: replyMessage
   });
 }
 
