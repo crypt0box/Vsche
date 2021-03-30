@@ -51,7 +51,7 @@ function utcToJapanDate(utcDate) {
 
 async function createReplyMessage(liverName) {
 	try {
-		const videoId = await fetchStreamingVideoId(livers[liverName]["channelId]"]);
+		const videoId = await fetchStreamingVideoId(livers[liverName]["channelId"]);
 		const scheduledStartTime = await fetchStreamingScheduledStartTime(videoId);
 		const streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
 		const replyMessage = streamingUrl ? 
