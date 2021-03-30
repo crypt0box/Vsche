@@ -1,6 +1,6 @@
 // モジュールのインポート
 const server = require("express")();
-const line = require("@line/bot-sdk"); // Messaging APIのSDKをインポート
+const line = require("@line/bot-sdk");
 const dialogflow = require("dialogflow");
 const format = require('date-fns/format');
 const utcToZonedTime = require('date-fns-tz/utcToZonedTime');
@@ -71,14 +71,12 @@ function lineBotReplyMessage(token, replyMessage) {
   });
 }
 
-// -----------------------------------------------------------------------------
 // パラメータ設定
 const line_config = {
-    channelAccessToken: process.env.LINE_ACCESS_TOKEN, // 環境変数からアクセストークンをセットしています
-    channelSecret: process.env.LINE_CHANNEL_SECRET // 環境変数からChannel Secretをセットしています
+	channelAccessToken: process.env.LINE_ACCESS_TOKEN,
+	channelSecret: process.env.LINE_CHANNEL_SECRET
 };
 
-// -----------------------------------------------------------------------------
 // Webサーバー設定
 server.listen(process.env.PORT || 3000);
 
@@ -87,46 +85,45 @@ const bot = new line.Client(line_config);
 
 // Dialogflowのクライアントインスタンスを作成
 const session_client = new dialogflow.SessionsClient({
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
-    }
+	project_id: process.env.GOOGLE_PROJECT_ID,
+	credentials: {
+		client_email: process.env.GOOGLE_CLIENT_EMAIL,
+		private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+	}
 });
 
-// -----------------------------------------------------------------------------
 // ルーター設定
 server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
-    // 先行してLINE側にステータスコード200でレスポンスする。
-    res.sendStatus(200);
+	// 先行してLINE側にステータスコード200でレスポンスする。
+	res.sendStatus(200);
 
-    // すべてのイベント処理のプロミスを格納する配列。
-    let events_processed = [];
+	// すべてのイベント処理のプロミスを格納する配列。
+	let events_processed = [];
 
-    // イベントオブジェクトを順次処理。
-    req.body.events.forEach((event) => {
-        // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
-        if (event.type == "message" && event.message.type == "text"){
-            events_processed.push(
-                session_client.detectIntent({
-                    session: session_client.sessionPath(process.env.GOOGLE_PROJECT_ID, event.source.userId),
-                    queryInput: {
-                        text: {
-                            text: event.message.text,
-                            languageCode: "ja",
-                        }
-                    }
-                }).then((responses) => {
-                    if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
-                      const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
-											createReplyMessage(liverName).then(replyMessage => {
-												lineBotReplyMessage(event.replyToken, replyMessage);
-											});
-                    };
-                }).catch(error => {
-                  console.log(error)
-                })
-            );
-        }
-    });
+	// イベントオブジェクトを順次処理。
+	req.body.events.forEach((event) => {
+		// この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
+		if (event.type == "message" && event.message.type == "text"){
+			events_processed.push(
+				session_client.detectIntent({
+					session: session_client.sessionPath(process.env.GOOGLE_PROJECT_ID, event.source.userId),
+					queryInput: {
+						text: {
+							text: event.message.text,
+							languageCode: "ja",
+						}
+					}
+				}).then((responses) => {
+					if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
+						const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
+						createReplyMessage(liverName).then(replyMessage => {
+							lineBotReplyMessage(event.replyToken, replyMessage);
+						});
+					};
+				}).catch(error => {
+					console.log(error)
+				})
+			);
+		}
+	});
 });
