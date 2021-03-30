@@ -49,17 +49,18 @@ function utcToJapanDate(utcDate) {
 
 async function createReplyMessage(liverName) {
 	try {
-		const streamingInfo = await fetchStreamingInfo(livers[liverName]["channelId"]);
-		const videoId = streamingInfo.data.items[0].id.videoId;
-		const streamingScheduledInfo = await fetchStreamingScheduledInfo(videoId);
-		const scheduledStartTime = streamingScheduledInfo.data.items[0].liveStreamingDetails['scheduledStartTime'];
-		const streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
-		const replyMessage = streamingInfo ? 
-		`${liverName}は${utcToJapanDate(scheduledStartTime)}から配信予定です！\n${streamingUrl}` : 
-		`いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`;
-		return replyMessage;
+    const streamingInfo = await fetchStreamingInfo(livers[liverName]["channelId"]);
+    console.log("createReplyMessage -> streamingInfo.data.items[0]", streamingInfo.data.items[0])
+    if (streamingInfo.data.items[0]) {
+      const videoId = streamingInfo.data.items[0].id.videoId;
+      const streamingScheduledInfo = await fetchStreamingScheduledInfo(videoId);
+      const scheduledStartTime = streamingScheduledInfo.data.items[0].liveStreamingDetails['scheduledStartTime'];
+      const streamingUrl = "https://www.youtube.com/watch?v=" + videoId;
+      return `${liverName}は${utcToJapanDate(scheduledStartTime)}から配信予定です！\n${streamingUrl}`;
+    }
+    return `いまのところ${liverName}の配信予定は無いようです。\nまた後で聞いてみてくださいね！`;
 	} catch (error) {
-    console.log(`エラーが発生しました (${error})`);
+    console.log(`エラーが発生しました:${error}`);
   };
 };
 
