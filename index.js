@@ -120,7 +120,10 @@ server.post('/bot/webhook', line.middleware(line_config), (req, res, next) => {
                     if (responses[0].queryResult && responses[0].queryResult.action == "get-liver-name"){
                       const liverName = responses[0].queryResult.parameters.fields.livers.stringValue;
 											const replyMessage = createReplyMessage(liverName);
-											lineBotReplyMessage(event.replyToken, replyMessage);
+											bot.replyMessage(event.replyToken, {
+												type: "text",
+												text: replyMessage
+											});
                     }
                 }).catch(error => {
                   console.log(error)
