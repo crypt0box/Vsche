@@ -7,13 +7,7 @@ Vtuberの配信予定をLINEで簡単チェック！<br>
 ![INDEX](https://user-images.githubusercontent.com/50011163/99390951-c2442100-291c-11eb-977b-803d225236d0.JPG)
 
 # Usage
-友達追加はコチラ<br>
-* リンク
-<br>
-https://lin.ee/jo7S4ec
-<br>
-* QRコード
-<br>
+リンク : https://lin.ee/jo7S4ec<br>
 ![qrcode](https://user-images.githubusercontent.com/50011163/113076227-8a71b200-9209-11eb-821e-3d968551588f.png)
 
 # Tech
