@@ -1,5 +1,5 @@
 # Vsche(Vスケ)
-![logo](https://user-images.githubusercontent.com/50011163/113076347-cc025d00-9209-11eb-8249-a65e9cbc1884.png)
+![logo](https://user-images.githubusercontent.com/50011163/113076347-cc025d00-9209-11eb-8249-a65e9cbc1884.png)<br>
 Vtuberの配信予定をLINEで簡単チェック！<br>
 ホロライブVtuberの名前や愛称を入力すると、今日の配信予定を返してくれるLINEBOTです<br>
 
@@ -8,7 +8,12 @@ Vtuberの配信予定をLINEで簡単チェック！<br>
 
 # Usage
 友達追加はコチラ<br>
+* リンク
+<br>
 https://lin.ee/jo7S4ec
+<br>
+* QRコード
+<br>
 ![qrcode](https://user-images.githubusercontent.com/50011163/113076227-8a71b200-9209-11eb-821e-3d968551588f.png)
 
 # Tech
