@@ -4,7 +4,7 @@ Vtuberの配信予定をLINEで簡単チェック！<br>
 ホロライブVtuberの名前や愛称を入力すると、今日の配信予定を返してくれるLINEBOTです<br>
 
 # DEMO
-![INDEX](https://user-images.githubusercontent.com/50011163/99390951-c2442100-291c-11eb-977b-803d225236d0.JPG)
+<img src="https://user-images.githubusercontent.com/50011163/113137160-1f52ca80-925f-11eb-8037-629e89b54b30.gif" width="320" height="540">
 
 # Usage
 リンク : https://lin.ee/jo7S4ec<br>
